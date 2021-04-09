@@ -11,6 +11,7 @@ export default {
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
     ]
   },
+  target: 'static',
   serverMiddleware: [
     { path: "/api", handler: "~/api/index.js" },
   ],
