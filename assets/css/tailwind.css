@@ -1,0 +1,50 @@
+@import "assets/font/style.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Segoe UI', serif;
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 900px;
+  }
+}
+
+.btn {
+  @apply flex space-x-2 border p-3 py-2.5 cursor-pointer text-center items-center leading-none hover:shadow-inner;
+}
+
+.btn.sm {
+   @apply py-1.5;
+}
+
+.square {
+  position: relative;
+  display: block;
+  padding-top: 100%;
+  width: 100%;
+}
+
+.square .inside {
+  @apply absolute top-0 right-0 left-0 bottom-0 h-full w-full border p-3 flex items-center justify-center;
+}
+
+.inside:empty:after {
+  content: "CALENDAR";
+  @apply text-5xl text-gray-100;
+}
+
+
+.content *:not(:last-child) {
+  @apply mb-3;
+}
