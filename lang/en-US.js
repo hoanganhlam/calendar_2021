@@ -13,6 +13,10 @@ export default {
   day: "Day",
   add_row: "Add a row",
   remove_row: "Remove last row",
+  passed: 'Passed',
+  date: 'Date',
+  day_until: 'Day until',
+  holiday: 'Holiday',
   w: {
     sun: "Sun",
     mon: "Mon",
@@ -163,4 +167,27 @@ export default {
       desc: "Shaded weekend"
     }
   },
+  page: {
+    holidays: {
+      year: {
+        title: '{0} Holidays',
+        desc: 'Below is a list of some of the most common holidays for {0}. Including the weekday they land on and how many days until the day.',
+        by_year: 'See all holidays for a specific year',
+        by_month: 'See holidays broken down by month'
+      },
+      month: {
+        title: '{0} Holidays',
+        desc: 'Below is a list of some of the most common holidays in {0}. Including the weekday they land on and how many days until they arrive.',
+        other_month: 'See a list of holidays for other months',
+        other_year: 'See holidays broken down by month'
+      }
+    },
+    holiday: {
+      title: '{0} Day',
+      date: '{0} {1}, {2}',
+      subtitle: 'The next 10 {0} Days',
+      desc: 'Here\'s a list of the next 10 {0} Days, including the day of week and how many days until then.',
+      by_year: 'Want to see all holidays for a specific year?'
+    }
+  }
 }

@@ -5,8 +5,8 @@
         <div class="w-1/3 text-right">{{ $t(`customize.${field}.title`) }}</div>
         <div class="flex-1 flex -mx-1 mb-1 flex-wrap">
           <template v-for="val in fields[field]">
-            <div :key="val" class="mx-1 mb-1 btn sm hover:bg-green-300"
-                 :class="{'bg-green-300': val === options[field], 'shadow-inner': val === options[field]}"
+            <div :key="val" class="mx-1 mb-1 btn sm hover:bg-gray-100"
+                 :class="{'bg-gray-100': val === options[field], 'shadow-inner': val === options[field]}"
               @click="options[field] = val"
             >
               <span v-if="typeof val === 'string'">{{ $t(`customize.${field}.value.${val}`) }}</span>
@@ -18,8 +18,8 @@
     </div>
     <div class="w-1/2">
       <div class="square mb-4">
-        <div class="inside">
-          <img src="http://127.0.0.1:3000/api/maker?preview=true" alt="">
+        <div class="inside bg-gray-100">
+          <img class="shadow-2xl" src="http://127.0.0.1:3000/api/maker?preview=true" alt="">
         </div>
       </div>
       <div class="flex -mx-1.5">

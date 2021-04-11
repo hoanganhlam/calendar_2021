@@ -8,13 +8,27 @@ Vue.component('noteable', Noteable);
 Vue.mixin({
   data() {
     return {
-      month_names : [
+      month_names: [
         "m.january", "m.february", "m.march", "m.april", "m.may", "m.june",
         "m.july", "m.august", "m.september", "m.october", "m.november", "m.december"
       ]
     }
   },
-  methods: {},
+  methods: {
+    slugify(str) {
+      str = str.replace(/^\s+|\s+$/g, ''); // trim
+      str = str.toLowerCase();
+      const from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+      const to = "aaaaeeeeiiiioooouuuunc------";
+      for (let i = 0, l = from.length; i < l; i++) {
+        str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+      }
+      str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+        .replace(/\s+/g, '-') // collapse whitespace and replace by -
+        .replace(/-+/g, '-'); // collapse dashes
+      return str;
+    }
+  },
   computed: {
     week_days() {
       const days = ["w.sun", "w.mon", "w.tue", "w.wed", "w.thu", "w.fri", "w.sat", "w.sun"];

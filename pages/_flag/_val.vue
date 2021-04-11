@@ -160,7 +160,7 @@ import BoardMonth from "~/components/board/Month.vue";
 import BoardYear from "~/components/board/Year.vue";
 import BoardWeek from "~/components/board/Week.vue";
 import {cloneDeep} from "lodash";
-
+const RESULTS = require("@/data/holiday_year.json")
 export default {
   name: "PageDate",
   components: {BoardWeek, BoardYear, BoardMonth},
@@ -178,7 +178,7 @@ export default {
     }
   },
   async fetch() {
-    this.holidays = await this.$axios.$get("/home")
+    this.holidays = RESULTS
     this.convertOption(false)
   },
   methods: {

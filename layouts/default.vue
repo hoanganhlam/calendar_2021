@@ -180,4 +180,8 @@ header.sticky .desc {
 .container {
   @apply px-4 md:px-0;
 }
+
+.nuxt-link-active {
+  @apply text-gray-500;
+}
 </style>

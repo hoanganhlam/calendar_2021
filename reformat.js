@@ -12,7 +12,7 @@ const out = students.map(item => {
   }
 })
 
-fs.writeFile("./api/data/new_holiday_home.json", JSON.stringify(out), (err) => {
+fs.writeFile("./api/data/holiday_year.json", JSON.stringify(out), (err) => {
   if (err) console.log(err);
   console.log("Successfully Written to File.");
 });
