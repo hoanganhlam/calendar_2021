@@ -5,7 +5,8 @@ export default {
       day_start_week: 1,
       showHoliday: false,
       show12Month: false,
-      shadedWeekend: false
+      shadedWeekend: false,
+      showGridLine: true
     },
   }),
   mutations: {

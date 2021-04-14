@@ -18,7 +18,7 @@
         </thead>
         <tbody class="text-gray-600 text-sm font-light">
         <tr v-for="holiday in holidays" :key="holiday.id"
-            class="border-b border-gray-200 hover:bg-gray-100 border-l border-r ">
+            class="border-b border-gray-200 hover:bg-gray-100 border-l border- ">
           <td class="py-2 px-4 text-left whitespace-nowrap">
             <div class="flex">
               <span class="font-bold">{{ holiday.dateName }}</span>

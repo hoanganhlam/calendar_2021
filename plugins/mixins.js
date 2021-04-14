@@ -34,6 +34,43 @@ Vue.mixin({
       const days = ["w.sun", "w.mon", "w.tue", "w.wed", "w.thu", "w.fri", "w.sat", "w.sun"];
       return days.slice(this.$store.state.config.calendar.day_start_week, 8)
     },
+    isHome() {
+      return this.$route.path === '/'
+    },
+    isMonth() {
+      return ['month', 'monthly'].includes(this.$route.params.flag)
+    },
+    isYear() {
+      return this.$route.params.flag === 'year'
+    },
+    isDay() {
+      return this.$route.params.flag === 'day'
+    },
+    isWeek() {
+      return this.$route.params.flag === 'week'
+    },
+    initDate() {
+      const {flag, val} = this.$route.params;
+      if (["day", "month", "monthly", "year", "week"].includes(flag) && val) {
+        let arr = val.split("-");
+        try {
+          let start_date = new Date(Number.parseInt(arr[['year', 'monthly'].includes(flag)  ? 0 : 1]), 0, flag === 'day' ? 0 : 1, 0, 0)
+          if (this.isMonth) {
+            if (this.month_names.indexOf(`m.${arr[0]}`) !== -1) {
+              start_date = start_date.addMonths(this.month_names.indexOf(`m.${arr[0]}`))
+            }
+          } else if (this.isWeek) {
+            start_date = start_date.addDays(Number.parseInt(arr[0]) * 7 - 4)
+          } else if (this.isDay) {
+            start_date = start_date.addDays(Number.parseInt(arr[0]));
+          }
+          return start_date
+        } catch (e) {
+          return new Date()
+        }
+      }
+      return new Date()
+    }
   }
 });
 

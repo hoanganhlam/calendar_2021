@@ -17,14 +17,15 @@ export default {
   date: 'Date',
   day_until: 'Day until',
   holiday: 'Holiday',
+  download: "Download",
   w: {
-    sun: "Sun",
-    mon: "Mon",
-    tue: "Tue",
-    wed: "Wed",
-    thu: "Thu",
-    fri: "Fri",
-    sat: "Sat",
+    sun: "Sunday",
+    mon: "Monday",
+    tue: "Tuesday",
+    wed: "Wednesday",
+    thu: "Thursday",
+    fri: "Friday",
+    sat: "Saturday",
   },
   m: {
     "january": "January",
@@ -46,7 +47,12 @@ export default {
     quick_nav: "Quick Nav"
   },
   nav: {
+    yearly: "Yearly",
+    monthly: "Monthly",
+    weekly: "Weekly",
+    daily: "Daily",
     previous_month: "Previous month",
+    current_month: "This month",
     next_month: "Next month",
     standard_calendar: "Standard Calendar",
     customize_calendar: "Customize Calendar",
@@ -154,6 +160,10 @@ export default {
       title: "12 months at once",
       desc: "View all 12 months, each month under the other."
     },
+    showGridLine: {
+      title: "Grid Lines",
+      desc: "Show grid lines in calendar"
+    },
     showHoliday: {
       title: "Add holidays",
       desc: "Add holidays in calendar"
@@ -188,6 +198,15 @@ export default {
       subtitle: 'The next 10 {0} Days',
       desc: 'Here\'s a list of the next 10 {0} Days, including the day of week and how many days until then.',
       by_year: 'Want to see all holidays for a specific year?'
+    },
+    calendar: {
+      title: {
+        year: "{0} Calendar",
+        month: "{0} {1}",
+        week: "{0} {1} Calendar",
+        day: "{0} {1} Calendar",
+        monthly: "Monthly {0} Calendar",
+      }
     }
   }
 }

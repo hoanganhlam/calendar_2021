@@ -5,37 +5,43 @@
         <div class="flex -mx-2 items-center">
           <n-link
             class="mx-1.5 btn rounded shadow hover:bg-gray-100" :to="moveDate(0)"
-            :class="{'bg-gray-100': isHome || initDate.isToday(), 'shadow-inner': isHome || initDate.isToday()}"
+            :class="{'bg-gray-100': isToday(), 'shadow-inner': isToday()}"
           >Today
           </n-link>
           <div class="mx-1.5 border rounded shadow">
-            <div class="flex space-x-1.5">
+            <div class="flex">
               <n-link class="cursor-pointer hover:bg-gray-100 hover:shadow-inner" :to="moveDate(-1)">
                 <icon class="p-1.5 md" name="left"></icon>
               </n-link>
+              <div v-if="isHome || (isMonth && $route.params.flag !== 'monthly')"
+                   class="px-1.5 cursor-pointer flex space-x-2 items-center hover:bg-gray-100 hover:shadow-inner"
+                   @click="showModal = true">
+                <icon name="calendar"></icon>
+                <span class="hidden md:block">{{ dateLocalize }}</span>
+              </div>
+              <div v-else class="bg-gray-100 shadow-inner p-1.5">
+                <span>{{ dateLocalize }}</span>
+              </div>
               <n-link class="cursor-pointer hover:bg-gray-100 hover:shadow-inner" :to="moveDate(1)">
                 <icon class="p-1.5 md" name="right"></icon>
               </n-link>
             </div>
           </div>
-          <div v-if="isHome || isMonth" class="mx-1.5 btn shadow rounded hover:bg-gray-100" @click="showModal = true">
-            <icon name="calendar"></icon>
-            <span class="hidden md:block">{{ dateLocalize }}</span>
-          </div>
-          <div class="mx-1.5 btn shadow rounded hover:bg-gray-100"
+          <div v-if="!isDay" class="mx-1.5 btn shadow rounded hover:bg-gray-100"
                :class="{'bg-gray-100': showOption, 'shadow-inner': showOption}"
                @click="showOption = !showOption">
             <icon name="app"></icon>
           </div>
-          <div v-if="!(isHome || isMonth)" class="mx-3">
-            <span>{{ dateLocalize }}</span>
-          </div>
         </div>
       </div>
       <div class="flex -mx-1.5">
-        <div class="mx-1.5 btn rounded hover:bg-gray-100 hover:shadow-inner">
+        <div v-show="false" class="mx-1.5 btn rounded hover:bg-gray-100 hover:shadow-inner">
           <icon name="save"></icon>
           <span class="hidden md:block">{{ $t('save') }}</span>
+        </div>
+        <div class="mx-1.5 btn rounded hover:bg-gray-100 hover:shadow-inner">
+          <icon name="download"></icon>
+          <span class="hidden md:block">{{ $t('download') }}</span>
         </div>
         <div @click="print" class="mx-1.5 btn rounded text-white bg-red-400 hover:bg-red-500 hover:shadow-inner">
           <icon name="print" fill="#EEE"></icon>
@@ -58,33 +64,43 @@
         </div>
       </div>
     </transition>
-    <div class="my-6 print:flex flex-col print:my-0 print:mb-4" :class="{'print:h-full': !isYear}">
-      <h1 v-if="!(isHome || isMonth) || !options.show12Month" class="text-2xl text-center pb-4 hidden print:block print:pt-4">{{ dateLocalize }}</h1>
-      <board-year :date="initDate" v-if="isYear"/>
-      <board-week :date="initDate" v-else-if="isWeek || isDay" :is-day="isDay"/>
-      <template v-else-if="!options.show12Month">
-        <board-month class="print:flex-1 print:pb-4" v-if="!options.show12Month" :date="initDate"/>
-      </template>
-      <div v-else-if="options.show12Month">
-        <div class="print:h-screen print:mb-0 mb-4 print:flex flex-col" v-for="i in 12" :key="i">
-          <h2 v-if="!isMonth" class="text-2xl pb-4 print:pt-4">{{ $t(month_names[i-1]) }} {{initDate.getFullYear()}}</h2>
+    <div class="my-6 print:my-0 print:flex flex-col print:my-0" :class="{'print:h-full': $route.params.flag !== 'monthly'}">
+      <h1 class="text-2xl text-center pb-4 hidden print:pb-0" :class="{'print:block': $route.params.flag !== 'monthly'}">
+        <span>{{ dateLocalize }}</span>
+      </h1>
+      <div v-if="$route.params.flag === 'monthly'">
+        <div v-for="i in 12" :key="i" class="pb-6 print:flex flex-col print:h-screen overflow-hidden">
+          <h2 class="text-2xl pb-4">
+            <n-link :to="`/month/${month_names[i - 1].replace('m.', '')}-${initDate.getFullYear()}`">
+              <span>{{ $t(month_names[i-1]) }} {{initDate.getFullYear()}}</span>
+            </n-link>
+          </h2>
           <board-month class="print:flex-1 print:pb-4" :date="new Date(initDate.getFullYear(), i - 1, 1)"/>
+          <div class="hidden print:block text-sm">Copyright © CalendarZones.com</div>
         </div>
       </div>
-    </div>
-    <div v-if="isYear" class="my-6 print:my-0">
-      <h4 class="uppercase mb-2 text-gray-500 text-sm">{{ $t('holidays') }}</h4>
-      <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-1 border p-3 mb-2">
-        <div v-for="(h, i) in holidays" :key="i" class="">
-          <div class="flex -mx-1">
-            <div class="mx-1 w-1/3 print:text-xs text-sm font-bold text-green-600">{{ parseMDate(h.date) }}</div>
-            <n-link to="/" class="flex-1 print:text-xs text-sm">{{ h.name }}</n-link>
+      <div v-else class="flex-1 flex flex-col print:py-4">
+        <board-year :date="initDate" v-if="isYear"/>
+        <board-week :date="initDate" v-else-if="isWeek || isDay"/>
+        <board-month v-else class="print:flex-1" :date="initDate"/>
+      </div>
+      <div v-if="isYear && options.showHoliday" class="py-6 print:py-0">
+        <h4 class="uppercase mb-2 text-gray-500 text-sm">{{ $t('holidays') }}</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-1 border p-3 mb-2">
+          <div v-for="(h, i) in holidays" :key="i" class="">
+            <div class="flex -mx-1">
+              <div class="mx-1 w-1/3 print:text-xs text-sm font-bold text-green-600">{{ parseMDate(h.date) }}</div>
+              <n-link to="/" class="flex-1 print:text-xs text-sm">{{ h.name }}</n-link>
+            </div>
           </div>
         </div>
+        <n-link class="text-sm print:hidden" :to="`/holidays/${initDate.getFullYear()}`">
+          <span>{{ $t('home.more_holiday') }} {{ initDate.getFullYear() }}</span>
+        </n-link>
       </div>
-      <n-link class="text-sm print:hidden" :to="`/holidays/${initDate.getFullYear()}`">{{ $t('home.more_holiday') }}
-        {{ initDate.getFullYear() }}
-      </n-link>
+      <div v-if="$route.params.flag !== 'monthly'" class="hidden print:block text-sm">
+        Copyright © CalendarZones.com
+      </div>
     </div>
     <div class="my-6 print:hidden">
       <h4 class="uppercase mb-2 text-gray-500 text-sm">{{ $t('app.title') }}</h4>
@@ -128,26 +144,33 @@
             <p class="mb-2 text-gray-500">{{ $t('modal.desc') }}</p>
             <h4 class="mb-1 font-bold text-sm">{{ $t('year') }}</h4>
             <div class="mb-4 flex -mx-2">
-              <div class="px-2 flex-1" v-for="i in 5" :key="i">
-                <n-link :to="selectDate('y', initDate.getFullYear() + i - 3)">{{ initDate.getFullYear() + i - 3 }}
-                </n-link>
+              <div class="cursor-pointer font-bold px-2 flex-1" v-for="i in 5" :key="i"
+                   :class="{'text-gray-400': popMonth.y === initDate.getFullYear() + i - 3}"
+                   @click="selectDate('y', initDate.getFullYear() + i - 3)">
+                <div>{{ initDate.getFullYear() + i - 3 }}</div>
               </div>
             </div>
-            <h4 class="mb-1 font-bold text-sm">{{ $t('month') }}</h4>
-            <div class="mb-4 grid grid-cols-3">
-              <div v-for="i in 12" :key="i">
-                <n-link :to="selectDate('m', i - 1)">{{ $t(month_names[i - 1]) }}</n-link>
+            <template v-if="$route.params.flag === 'month' || isHome">
+              <h4 class="mb-1 font-bold text-sm">{{ $t('month') }}</h4>
+              <div class="mb-4 grid grid-cols-3">
+                <div class="cursor-pointer" :class="{'text-gray-400': popMonth.m === i - 1}"
+                     v-for="i in 12" :key="i" @click="selectDate('m', i - 1)">
+                  <div>{{ $t(month_names[i - 1]) }}</div>
+                </div>
               </div>
-            </div>
-            <h4 class="mb-1 font-bold text-sm">{{ $t('modal.quick_nav') }}</h4>
-            <div class="flex -mx-2 text-center">
-              <div class="flex-1 px-2">
-                <n-link class="btn hover:bg-gray-50" :to="moveDate(-1)">{{ $t('nav.previous_month') }}</n-link>
+              <h4 class="mb-1 font-bold text-sm">{{ $t('modal.quick_nav') }}</h4>
+              <div class="flex -mx-2">
+                <div class="flex-1 px-2">
+                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(-1)">{{ $t('nav.previous_month') }}</n-link>
+                </div>
+                <div class="flex-1 px-2">
+                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(0)">{{ $t('nav.current_month') }}</n-link>
+                </div>
+                <div class="flex-1 px-2">
+                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(1)">{{ $t('nav.next_month') }}</n-link>
+                </div>
               </div>
-              <div class="flex-1 px-2">
-                <n-link class="btn hover:bg-gray-50" :to="moveDate(1)">{{ $t('nav.next_month') }}</n-link>
-              </div>
-            </div>
+            </template>
           </div>
         </div>
       </div>
@@ -169,12 +192,16 @@ export default {
       showOption: false,
       options: {
         showHoliday: false,
-        show12Month: false,
+        showGridLine: false,
         shadedWeekend: false,
         sundayStart: false
       },
       showModal: false,
-      holidays: []
+      holidays: [],
+      popMonth: {
+        y: 2021,
+        m: 0
+      }
     }
   },
   async fetch() {
@@ -182,14 +209,50 @@ export default {
     this.convertOption(false)
   },
   methods: {
+    isToday() {
+      const current = new Date()
+      let path = null
+      if (this.isYear) {
+        path = `/year/${current.getFullYear()}`
+      } else if (this.isMonth || this.isHome) {
+        if (this.$route.params.flag === 'monthly') {
+          path = `/monthly/${current.getFullYear()}`
+        } else {
+          path = `/month/${this.month_names[current.getMonth()].replace("m.", "")}-${current.getFullYear()}`
+        }
+      } else if (this.isWeek) {
+        path = `/week/${current.getWeekNumber()}-${current.getFullYear()}`
+      } else if (this.isDay) {
+        path = `/day/${current.getDOY()}-${current.getFullYear()}`
+      }
+      return this.isHome || path === this.$route.path
+    },
     moveDate(amount) {
       if (amount === 0) {
-        return '/'
+        const current = new Date()
+        if (this.isYear) {
+          return `/year/${current.getFullYear()}`
+        } else if (this.isMonth || this.isHome) {
+          if (this.$route.params.flag === 'monthly') {
+            return `/monthly/${current.getFullYear()}`
+          } else {
+            return `/month/${this.month_names[current.getMonth()].replace("m.", "")}-${current.getFullYear()}`
+          }
+        } else if (this.isWeek) {
+          return `/week/${current.getWeekNumber()}-${current.getFullYear()}`
+        } else if (this.isDay) {
+          return `/day/${current.getDOY()}-${current.getFullYear()}`
+        }
       } else {
         let cloneDate = new Date(this.initDate.getTime())
         if (this.isHome || this.isMonth) {
-          cloneDate = cloneDate.addMonths(amount)
-          return `/month/${this.month_names[cloneDate.getMonth()].replace("m.", "")}-${cloneDate.getFullYear()}`
+          if (this.$route.params.flag === 'monthly') {
+            cloneDate = cloneDate.addMonths(amount * 12)
+            return `/monthly/${cloneDate.getFullYear()}`
+          } else {
+            cloneDate = cloneDate.addMonths(amount)
+            return `/month/${this.month_names[cloneDate.getMonth()].replace("m.", "")}-${cloneDate.getFullYear()}`
+          }
         } else if (this.isYear) {
           cloneDate = cloneDate.addMonths(amount * 12)
           return `/year/${cloneDate.getFullYear()}`
@@ -203,13 +266,15 @@ export default {
       }
     },
     selectDate(flag, value) {
-      let cloneDate = new Date(this.initDate.getTime())
       if (flag === 'y') {
-        cloneDate.setFullYear(value)
+        if (this.$route.params.flag === 'monthly') {
+          this.$router.push(`/monthly/${value}`)
+        } else {
+          this.popMonth.y = value
+        }
       } else if (flag === 'm') {
-        cloneDate.setMonth(value)
+        this.$router.push(`/month/${this.month_names[value].replace("m.","")}-${this.popMonth.y}`)
       }
-      return '/month/' + this.month_names[cloneDate.getMonth()].replace("m.", "") + "-" + cloneDate.getFullYear()
     },
     parseMDate(date) {
       const d = new Date(`2000-${date}`)
@@ -239,82 +304,21 @@ export default {
     }
   },
   computed: {
-    isHome() {
-      return this.$route.path === '/'
-    },
-    isMonth() {
-      return this.$route.params.flag === 'month'
-    },
-    isYear() {
-      return this.$route.params.flag === 'year'
-    },
-    isDay() {
-      return this.$route.params.flag === 'day'
-    },
-    isWeek() {
-      return this.$route.params.flag === 'week'
-    },
-    navigate() {
-      let n, p, flag;
-      if (this.isHome || this.isMonth) {
-        flag = 'month'
-        p = this.initDate.addMonths(-1)
-        n = this.initDate.addMonths(1)
-      } else if (this.isYear) {
-        flag = 'year'
-        p = this.initDate.addMonths(-12)
-        n = this.initDate.addMonths(12)
-      } else if (this.isWeek) {
-        flag = 'week'
-        p = this.initDate.addDays(-7)
-        n = this.initDate.addDays(7)
-      } else if (this.isDay) {
-        flag = 'day'
-        p = this.initDate.addDays(-1)
-        n = this.initDate.addDays(1)
-      }
-
-      function toSlug(d, f) {
-        switch (f) {
-          case 'day':
-            break
-        }
-      }
-
-      if (flag) {
-        return {}
-      } else {
-        return null
-      }
-    },
     dateLocalize() {
       if (this.isHome || this.isMonth) {
-        return this.$t(this.month_names[this.initDate.getMonth()]) + " " + this.initDate.getFullYear()
+        if (this.$route.params.flag === 'monthly') {
+          return this.$t('page.calendar.title.monthly', [this.initDate.getFullYear()])
+        } else {
+          return this.$t('page.calendar.title.month', [this.$t(this.month_names[this.initDate.getMonth()]), this.initDate.getFullYear()])
+        }
       } else if (this.isWeek) {
-        return `${this.$t('week')} ${this.initDate.getWeekNumber()}`
+        return `${this.$t('week')} ${this.initDate.getWeekNumber()} / ${this.initDate.getFullYear()}`
       } else if (this.isDay) {
-        return this.$t(this.month_names[this.initDate.getMonth()]) + " " + this.initDate.getDate()
+        return this.$t(this.month_names[this.initDate.getMonth()]) + " " + this.initDate.getDate() + ", " + this.initDate.getFullYear()
       } else if (this.isYear) {
-        return this.initDate.getFullYear()
+        return this.$t('page.calendar.title.year', [this.initDate.getFullYear()])
       }
     },
-    initDate() {
-      if (this.isHome) {
-        return new Date()
-      } else {
-        const {flag, val} = this.$route.params;
-        let arr = val.split("-");
-        let start_date = new Date(Number.parseInt(arr[flag === 'year' ? 0 : 1]), 0, flag === 'day' ? 0 : 1, 0, 0)
-        if (this.isMonth) {
-          start_date = start_date.addMonths(this.month_names.indexOf(`m.${arr[0]}`))
-        } else if (this.isWeek) {
-          start_date = start_date.addDays(Number.parseInt(arr[0]) * 7 - 4)
-        } else if (this.isDay) {
-          start_date = start_date.addDays(Number.parseInt(arr[0]));
-        }
-        return start_date
-      }
-    }
   },
   watch: {
     options: {
@@ -323,6 +327,14 @@ export default {
         this.convertOption(true)
       }
     }
+  },
+  mounted() {
+    this.popMonth = {
+      y: this.initDate.getFullYear(),
+      m: this.initDate.getMonth()
+    }
+    const notes = JSON.parse(localStorage.getItem("calendar"))
+    this.$store.commit('note/SET_NOTES', notes)
   }
 }
 </script>
@@ -344,5 +356,11 @@ export default {
 
 .modal-content {
   @apply bg-white rounded p-6 pb-24 md:pb-6 shadow-lg md:border border-gray-300;
+}
+
+@media print {
+  .container {
+    max-width: 100%;
+  }
 }
 </style>

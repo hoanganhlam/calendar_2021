@@ -14,9 +14,13 @@
                 </div>
               </div>
               <div class="px-4 -mx-4 flex">
-                <n-link to="/customize" class="px-4">Customize</n-link>
-                <n-link to="/printable" class="px-4">Printable</n-link>
-                <n-link to="/holidays" class="px-4">Holidays</n-link>
+                <n-link class="px-2" :to="`/year/${initDate.getFullYear()}`">{{ $t(`nav.yearly`) }}</n-link>
+                <n-link class="px-2" :to="`/monthly/${initDate.getFullYear()}`">{{ $t(`nav.monthly`) }}</n-link>
+                <n-link class="px-2" :to="`/week/${initDate.getWeekNumber()}-${initDate.getFullYear()}`">{{ $t(`nav.weekly`) }}</n-link>
+                <n-link class="px-2" :to="`/day/${initDate.getDOY()}-${initDate.getFullYear()}`">{{ $t(`nav.daily`) }}</n-link>
+                <n-link class="px-2" to="/customize">Customize</n-link>
+                <n-link class="px-2" to="/printable">Printable</n-link>
+                <n-link class="px-2" to="/holidays">Holidays</n-link>
               </div>
             </div>
           </div>
@@ -24,7 +28,7 @@
             <div class="btn" @click="modal = 'trans'">
               <icon name="trans"></icon>
             </div>
-            <div class="btn" @click="modal = 'login'">
+            <div v-show="false" class="btn" @click="modal = 'login'">
               <icon name="user"></icon>
             </div>
           </div>
@@ -122,7 +126,6 @@ export default {
   mounted() {
     const header = document.getElementById("header");
     const sticky = header.offsetTop;
-
     function myFunction() {
       if (window.pageYOffset > sticky) {
         header.classList.add("sticky");
@@ -130,12 +133,14 @@ export default {
         header.classList.remove("sticky");
       }
     }
-
     this.$nextTick(function () {
       window.onscroll = function () {
         myFunction()
       };
     })
+    setInterval(() => {
+      localStorage.setItem('calendar', JSON.stringify(this.$store.state.note.notes))
+    }, 3000)
   }
 }
 </script>
@@ -158,7 +163,7 @@ export default {
   opacity: 0;
 }
 .today {
-  @apply font-extrabold rounded-sm p-0.5 px-1.5 bg-red-100;
+  @apply font-extrabold rounded-sm -ml-1.5 p-0.5 px-1.5 bg-red-100 print:bg-white print:font-normal print:ml-0;
 }
 a {
   @apply text-blue-700;

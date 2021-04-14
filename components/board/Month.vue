@@ -5,9 +5,10 @@
     </div>
     <div class="print:flex-1 grid grid-cols-7 border-t border-l text-xs">
       <div v-for="(d, i) in date_arr" :key="i" class="border-r border-b relative" :class="{'bg-gray-50': d.isWeekend() && shaded}">
-        <noteable/>
-        <span v-if="d.getMonth() === date.getMonth()"
-              class="absolute bottom-2 right-2" :class="{'today': d.isToday()}">{{ d.getDate() }}</span>
+        <noteable :date="d"/>
+        <span
+          v-if="d.getMonth() === date.getMonth()"
+          class="absolute top-2 right-2" :class="{'today': d.isToday()}">{{ d.getDate() }}</span>
       </div>
     </div>
   </div>
