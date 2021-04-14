@@ -333,14 +333,9 @@ export default {
       y: this.initDate.getFullYear(),
       m: this.initDate.getMonth()
     }
-    let notes = []
-    try {
-      notes = JSON.parse(localStorage.getItem("calendar"))
-    } catch (e) {
-      console.log(e);
-      notes = []
+    if (localStorage.getItem("calendar")) {
+      this.$store.commit('note/SET_NOTES', JSON.parse(localStorage.getItem("calendar")))
     }
-    this.$store.commit('note/SET_NOTES', notes)
   }
 }
 </script>

@@ -51,14 +51,17 @@ export default {
   },
   computed: {
     notes() {
-      return this.$store.state.note.notes.filter(x => {
-        let flag = x.date === this.formatDate(this.date)
-        if (this.index < 0) {
-          return flag
-        } else {
-          return flag && x.index === this.index
-        }
-      })
+      if (this.$store.state.note.notes) {
+        return this.$store.state.note.notes.filter(x => {
+          let flag = x.date === this.formatDate(this.date)
+          if (this.index < 0) {
+            return flag
+          } else {
+            return flag && x.index === this.index
+          }
+        })
+      }
+      return []
     }
   },
   watch: {
