@@ -42,7 +42,8 @@ export default {
     "december": "December"
   },
   modal: {
-    title: "Select a Month",
+    day_title: "Select a day",
+    title: "Select a month",
     desc: "Select the month and year you want a calendar for:",
     quick_nav: "Quick Nav"
   },

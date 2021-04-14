@@ -4,7 +4,8 @@
       <div class="text-gray-500 print:text-xs" v-for="i in 7" :key="i">{{ $t(week_days[i - 1]).substr(0, 2) }}</div>
     </div>
     <div class="grid grid-cols-7 text-sm print:text-xs">
-      <div v-for="(d, i) in date_arr" :key="i" class="p-1" :class="{'bg-gray-50': shaded && d.isWeekend()}">
+      <div v-for="(d, i) in date_arr" :key="i" class="p-1 cursor-pointer"
+           :class="{'bg-gray-50': shaded && d.isWeekend()}" @click="$emit('select', d.getDate())">
         <span :class="{'today': d.isToday()}" v-if="d.getMonth() === date.getMonth()">{{ d.getDate() }}</span>
       </div>
     </div>

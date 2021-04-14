@@ -13,7 +13,7 @@
               <n-link class="cursor-pointer hover:bg-gray-100 hover:shadow-inner" :to="moveDate(-1)">
                 <icon class="p-1.5 md" name="left"></icon>
               </n-link>
-              <div v-if="isHome || (isMonth && $route.params.flag !== 'monthly')"
+              <div v-if="isHome || (isMonth && $route.params.flag !== 'monthly') || isDay"
                    class="px-1.5 cursor-pointer flex space-x-2 items-center hover:bg-gray-100 hover:shadow-inner"
                    @click="showModal = true">
                 <icon name="calendar"></icon>
@@ -132,7 +132,7 @@
     </div>
     <transition nade="fade">
       <div v-show="showModal" class="modal">
-        <div class="mx-auto w-full md:w-1/3 md:mt-16 flex flex-col justify-end md:justify-start h-full">
+        <div class="mx-auto w-full md:w-1/4 md:mt-16 flex flex-col justify-end md:justify-start h-full">
           <div class="mb-2 flex justify-end">
             <div class="cursor-pointer ml-auto rounded-full bg-gray-50 shadow p-2.5 inline-flex"
                  @click="showModal = !showModal">
@@ -140,34 +140,55 @@
             </div>
           </div>
           <div class="modal-content">
-            <h3 class="mb-2 font-bold uppercase">{{ $t('modal.title') }}</h3>
-            <p class="mb-2 text-gray-500">{{ $t('modal.desc') }}</p>
-            <h4 class="mb-1 font-bold text-sm">{{ $t('year') }}</h4>
+            <h3 class="mb-2 font-bold uppercase">{{ $t(isDay? 'modal.day_title' : 'modal.title') }}</h3>
+            <p v-if="!isDay" class="mb-2 text-gray-500">{{ $t('modal.desc') }}</p>
+            <h4 v-if="!isDay" class="mb-1 font-bold text-sm">{{ $t('year') }}</h4>
             <div class="mb-4 flex -mx-2">
-              <div class="cursor-pointer font-bold px-2 flex-1" v-for="i in 5" :key="i"
-                   :class="{'text-gray-400': popMonth.y === initDate.getFullYear() + i - 3}"
-                   @click="selectDate('y', initDate.getFullYear() + i - 3)">
-                <div>{{ initDate.getFullYear() + i - 3 }}</div>
+              <div class="cursor-pointer font-bold px-2 flex-1" v-for="i in oc.y" :key="i"
+                   :class="{'text-center': isDay, 'text-gray-400': popMonth.y === popMonth.y + i - oc.yr}"
+                   @click="selectDate('y', popMonth.y + i - oc.yr)">
+                <div>{{ popMonth.y + i - oc.yr }}</div>
               </div>
             </div>
-            <template v-if="$route.params.flag === 'month' || isHome">
+            <template v-if="!isDay">
               <h4 class="mb-1 font-bold text-sm">{{ $t('month') }}</h4>
-              <div class="mb-4 grid grid-cols-3">
-                <div class="cursor-pointer" :class="{'text-gray-400': popMonth.m === i - 1}"
-                     v-for="i in 12" :key="i" @click="selectDate('m', i - 1)">
+              <div class="mb-4 flex flex-wrap -mx-2">
+                <div v-for="i in oc.m" :key="i" class="cursor-pointer px-2 w-1/4"
+                     :class="{'text-gray-400': popMonth.m === i - 1}"
+                     @click="selectDate('m', i - 1)">
                   <div>{{ $t(month_names[i - 1]) }}</div>
                 </div>
               </div>
+            </template>
+            <div v-else class="mb-4 flex justify-between items-center">
+              <div class="p-2 shadow rounded-xl border cursor-pointer" @click="slideMonth(false)">
+                <icon name="left"></icon>
+              </div>
+              <div>{{ $t(month_names[popMonth.m]) }} {{popMonth.y}}</div>
+              <div class="p-2 shadow rounded-xl border cursor-pointer" @click="slideMonth(true)">
+                <icon name="right"></icon>
+              </div>
+            </div>
+            <div v-if="isDay" class="mb-4">
+              <cell-month @select="handleSelect" class="text-center"></cell-month>
+            </div>
+            <template v-if="!isDay">
               <h4 class="mb-1 font-bold text-sm">{{ $t('modal.quick_nav') }}</h4>
-              <div class="flex -mx-2">
+              <div class="flex -mx-2 text-sm">
                 <div class="flex-1 px-2">
-                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(-1)">{{ $t('nav.previous_month') }}</n-link>
+                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(-1)">
+                    <span>{{ $t('nav.previous_month') }}</span>
+                  </n-link>
                 </div>
                 <div class="flex-1 px-2">
-                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(0)">{{ $t('nav.current_month') }}</n-link>
+                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(0)">
+                    <span>{{ $t('nav.current_month') }}</span>
+                  </n-link>
                 </div>
                 <div class="flex-1 px-2">
-                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(1)">{{ $t('nav.next_month') }}</n-link>
+                  <n-link class="btn justify-center hover:bg-gray-50" :to="moveDate(1)">
+                    <span>{{ $t('nav.next_month') }}</span>
+                  </n-link>
                 </div>
               </div>
             </template>
@@ -183,10 +204,11 @@ import BoardMonth from "~/components/board/Month.vue";
 import BoardYear from "~/components/board/Year.vue";
 import BoardWeek from "~/components/board/Week.vue";
 import {cloneDeep} from "lodash";
+import CellMonth from "@/components/cell/Month.vue";
 const RESULTS = require("@/data/holiday_year.json")
 export default {
   name: "PageDate",
-  components: {BoardWeek, BoardYear, BoardMonth},
+  components: {CellMonth, BoardWeek, BoardYear, BoardMonth},
   data() {
     return {
       showOption: false,
@@ -301,6 +323,27 @@ export default {
         })
         this.options.sundayStart = !Boolean(this.options.sundayStart)
       }
+    },
+    slideMonth(flag) {
+      if (flag) {
+        if (this.popMonth.m === 11) {
+          this.popMonth.m = 0
+          this.popMonth.y ++
+        } else {
+          this.popMonth.m ++
+        }
+      } else {
+        if (this.popMonth.m === 0) {
+          this.popMonth.m = 11
+          this.popMonth.y --
+        } else {
+          this.popMonth.m --
+        }
+      }
+    },
+    handleSelect(d) {
+      const newDate = new Date(this.popMonth.y, this.popMonth.m, d)
+      this.$router.push(`/day/${newDate.getDOY()}-${newDate.getFullYear()}`)
     }
   },
   computed: {
@@ -319,6 +362,19 @@ export default {
         return this.$t('page.calendar.title.year', [this.initDate.getFullYear()])
       }
     },
+    oc() {
+      let y = 5
+      let yr = 3
+      let m = 12
+      if (this.isDay) {
+        y = 3;
+        yr = 2;
+        m = 4
+      }
+      return {
+        y, yr, m
+      }
+    }
   },
   watch: {
     options: {

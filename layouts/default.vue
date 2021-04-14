@@ -18,8 +18,8 @@
                 <n-link class="px-2" :to="`/monthly/${initDate.getFullYear()}`">{{ $t(`nav.monthly`) }}</n-link>
                 <n-link class="px-2" :to="`/week/${initDate.getWeekNumber()}-${initDate.getFullYear()}`">{{ $t(`nav.weekly`) }}</n-link>
                 <n-link class="px-2" :to="`/day/${initDate.getDOY()}-${initDate.getFullYear()}`">{{ $t(`nav.daily`) }}</n-link>
-                <n-link class="px-2" to="/customize">Customize</n-link>
                 <n-link class="px-2" to="/printable">Printable</n-link>
+                <n-link class="px-2" to="/customize">Customize</n-link>
                 <n-link class="px-2" to="/holidays">Holidays</n-link>
               </div>
             </div>
