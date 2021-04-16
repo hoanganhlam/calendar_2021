@@ -13,7 +13,7 @@
                   <span class="desc">{{ $t('desc') }}</span>
                 </div>
               </div>
-              <div class="px-4 -mx-4 flex">
+              <div class="px-4 -mx-4 flex uppercase text-xs font-bold">
                 <n-link class="px-2" :to="`/year/${initDate.getFullYear()}`">{{ $t(`nav.yearly`) }}</n-link>
                 <n-link class="px-2" :to="`/monthly/${initDate.getFullYear()}`">{{ $t(`nav.monthly`) }}</n-link>
                 <n-link class="px-2" :to="`/week/${initDate.getWeekNumber()}-${initDate.getFullYear()}`">{{ $t(`nav.weekly`) }}</n-link>
@@ -100,6 +100,13 @@ export default {
           code: 'fr',
           name: 'Français'
         }
+      ]
+    }
+  },
+  head() {
+    return {
+      link: [
+        {href: 'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap', rel: 'stylesheet'}
       ]
     }
   },

@@ -205,7 +205,7 @@ import BoardYear from "~/components/board/Year.vue";
 import BoardWeek from "~/components/board/Week.vue";
 import {cloneDeep} from "lodash";
 import CellMonth from "@/components/cell/Month.vue";
-const RESULTS = require("@/data/holiday_year.json")
+const RESULTS = []
 export default {
   name: "PageDate",
   components: {CellMonth, BoardWeek, BoardYear, BoardMonth},

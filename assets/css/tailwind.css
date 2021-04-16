@@ -1,11 +1,11 @@
-@import "assets/font/style.css";
+/*@import "assets/font/style.css";*/
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: 'Segoe UI', serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 @media (min-width: 1536px) {

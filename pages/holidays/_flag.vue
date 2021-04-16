@@ -2,9 +2,9 @@
   <div class="flex flex-col md:flex-row md:space-x-4">
     <div class="flex-1 mb-4">
       <div class="content">
-        <h1 class="text-4xl font-bold">
+        <h1 class="text-2xl font-bold">
           {{ $t(`page.holidays.${isYear ? 'year' : 'month'}.title`, [`${$t(month_names[currentDate.getMonth()])} ${currentDate.getFullYear()}`]) }}</h1>
-        <p class="text-xl">
+        <p class="text-lg">
           {{ $t(`page.holidays.${isYear ? 'year' : 'month'}.desc`, [`${$t(month_names[currentDate.getMonth()])} ${currentDate.getFullYear()}`]) }}</p>
       </div>
       <table class="my-3 min-w-max w-full table-auto">
@@ -79,7 +79,8 @@
 <script>
 import Sidebar from "~/components/Sidebar";
 import moment from "moment";
-const results = require("@/data/holiday_list.json")
+import Holidays from "date-holidays"
+const hd = new Holidays()
 
 export default {
   name: "PageHoliday",
@@ -91,11 +92,13 @@ export default {
     }
   },
   async fetch() {
+    hd.init('US')
     if (this.isYear) {
       let flag = this.$route.params.flag ? this.$route.params.flag : (new Date()).getFullYear()
+      const holidays = hd.getHolidays(flag)
       this.currentDate = new Date(`${flag}-1-1`)
-      this.holidays = results.map(x => {
-        let date = moment(new Date(`${flag}-${x.date}`))
+      this.holidays = holidays.map(x => {
+        let date = moment(new Date(x.date))
         let until = date.diff(new Date(), "days")
         return {
           ...x,
@@ -110,11 +113,11 @@ export default {
       let arr = this.$route.params.flag.split("-")
       this.currentDate = new Date(`${arr[1]}-${arr[0]}-1`)
       let flag = this.currentDate.getFullYear()
-      this.holidays = results.filter(x => {
-        let arr2 = x.date.split("-")
-        return Number.parseInt(arr2[0]) === this.currentDate.getMonth() + 1
+      const holidays = hd.getHolidays(flag)
+      this.holidays = holidays.filter(x => {
+        return new Date(x.date).getMonth() === this.currentDate.getMonth()
       }).map(x => {
-        let date = moment(new Date(`${flag}-${x.date}`))
+        let date = moment(new Date(x.date))
         let until = date.diff(new Date(), "days")
         return {
           ...x,

@@ -1,33 +1,32 @@
 <template>
   <div v-if="holiday" class="flex flex-col md:flex-row md:space-x-4">
     <div class="flex-1 mb-4">
-      <div class="content">
-        <h1 class="text-4xl font-bold">{{ holiday.name }}</h1>
-        <p class="text-xl">{{ $t('page.holiday.date', [holiday.dateWeek, holiday.dateName, holiday.year]) }}</p>
+      <div class="">
+        <h1 class="text-2xl leading-none font-bold">{{ holiday.name }}</h1>
+        <p class="mb-2 text-gray-500">{{ $t('page.holiday.date', [holiday.dateWeek, holiday.dateName, holiday.year]) }}</p>
         <p>{{$t('page.holiday.desc', [holiday.name])}}</p>
       </div>
       <table class="my-3 min-w-max w-full table-auto">
         <thead>
         <tr class="bg-gray-200 border text-gray-600 uppercase text-sm leading-normal">
+          <th class="py-2 px-4 text-center">{{ $t('holiday') }}</th>
           <th class="py-2 px-4 text-left">{{ $t('date') }}</th>
           <th class="py-2 px-4 text-left"></th>
-          <th class="py-2 px-4 text-center">{{ $t('holiday') }}</th>
           <th class="py-2 px-4 text-center">{{ $t('day_until') }}</th>
         </tr>
         </thead>
         <tbody class="text-gray-600 text-sm font-light">
-        <tr v-for="holiday in instances" :key="holiday.id"
-            class="border-b border-gray-200 hover:bg-gray-100 border-l border-r ">
+        <tr v-for="holiday in instances" :key="holiday.id" class="border-b border-gray-200 hover:bg-gray-100 border-l border-r ">
+          <td class="py-2 px-4">
+            <n-link :to="`/holiday/${holiday.slug}-${holiday.year}`">{{ holiday.name }} {{holiday.year}}</n-link>
+          </td>
           <td class="py-2 px-4 text-left whitespace-nowrap">
             <div class="flex">
-              <span class="font-bold">{{ holiday.dateName }}</span>
+              <span>{{ holiday.dateName }}</span>
             </div>
           </td>
           <td class="py-2 px-4">
             <div class="flex items-center">{{ holiday.dateWeek }}</div>
-          </td>
-          <td class="py-2 px-4">
-            <n-link :to="`/holiday/${holiday.slug}`">{{ holiday.name }} {{holiday.year}}</n-link>
           </td>
           <td class="py-2 px-4 text-right">
             <span class="bg-gray-100 text-purple-600 py-1 px-3 rounded-full text-xs">{{ holiday.until }}</span>
@@ -54,22 +53,35 @@
 <script>
 import Sidebar from "@/components/Sidebar.vue";
 import moment from "moment";
+import Holidays from "date-holidays"
+const hd = new Holidays()
 
-const HOLIDAY_LIST = require("@/data/holiday_list.json")
-
+function isNumeric(value) {
+  return /^-?\d+$/.test(value);
+}
 export default {
   name: "Holiday",
   components: {Sidebar},
   data() {
-    let test = HOLIDAY_LIST.filter(x => this.slugify(x.name) === this.$route.params.slug)
+    let slug = this.$route.params.slug
+    const arr =  this.$route.params.slug.split("-")
+    let date = new Date()
+    let flag = date.getFullYear()
+    if (isNumeric(arr[arr.length - 1]) && arr[arr.length - 1].length === 4) {
+      flag = Number.parseInt(arr[arr.length - 1])
+      slug = slug.replace(`-${flag}`, '')
+      date = new Date(flag, date.getMonth(), 1)
+    }
+    hd.init('US')
+    const holidays = hd.getHolidays(flag)
+    let test = holidays.filter(x => this.slugify(x.name) === slug)
     let holiday = null
     let instances = []
-    let date = new Date()
     if (test.length) {
       holiday = test[0]
       for (let i = 0; i < 10; i++) {
-        let nextDate = moment(new Date(`${date.getFullYear() + i}-${holiday.date}`))
-        let until = nextDate.diff(new Date(), "days")
+        let nextDate = moment(new Date(holiday.date).addMonths(12 * i))
+        let until = nextDate.diff(date, "days")
         instances.push({
           ...holiday,
           date: nextDate,
