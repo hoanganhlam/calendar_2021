@@ -53,8 +53,6 @@
 <script>
 import Sidebar from "@/components/Sidebar.vue";
 import moment from "moment";
-import Holidays from "date-holidays"
-const hd = new Holidays()
 
 function isNumeric(value) {
   return /^-?\d+$/.test(value);
@@ -63,6 +61,13 @@ export default {
   name: "Holiday",
   components: {Sidebar},
   data() {
+    return {
+      holiday: null,
+      date: null,
+      instances: []
+    }
+  },
+  async fetch() {
     let slug = this.$route.params.slug
     const arr =  this.$route.params.slug.split("-")
     let date = new Date()
@@ -72,8 +77,7 @@ export default {
       slug = slug.replace(`-${flag}`, '')
       date = new Date(flag, date.getMonth(), 1)
     }
-    hd.init('US')
-    const holidays = hd.getHolidays(flag)
+    const holidays = await this.$axios.$get('/holidays')
     let test = holidays.filter(x => this.slugify(x.name) === slug)
     let holiday = null
     let instances = []
@@ -94,11 +98,9 @@ export default {
       }
       holiday = instances[0]
     }
-    return {
-      holiday,
-      date,
-      instances
-    }
+    this.holiday = holiday
+    this.date = date
+    this.instances = instances
   }
 }
 </script>

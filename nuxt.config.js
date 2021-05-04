@@ -1,4 +1,7 @@
 export default {
+  env: {
+    API_ENDPOINT: process.env.API_ENDPOINT || 'http://127.0.0.1:3333'
+  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'MakeACalendar-vite',
@@ -11,9 +14,6 @@ export default {
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
     ]
   },
-  serverMiddleware: [
-    { path: "/api", handler: "~/api/index.js" },
-  ],
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
@@ -30,7 +30,6 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
-    'nuxt-vite'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -55,7 +54,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: "http://127.0.0.1:3000/api"
+    baseURL: process.env.API_ENDPOINT || "http://127.0.0.1:3333"
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa

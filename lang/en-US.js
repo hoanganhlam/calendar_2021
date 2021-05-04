@@ -86,11 +86,11 @@ export default {
     type: {
       title: "Type",
       value: {
-        monthly: 'Monthly',
-        yearly: 'Yearly',
-        two_month: 'Two month',
-        four_month: 'Four month',
-        six_month: 'Six month'
+        "m": 'Monthly',
+        "12m": 'Yearly',
+        "2m": 'Two month',
+        "4m": 'Four month',
+        "6m": 'Six month'
       }
     },
     year: {
@@ -99,7 +99,7 @@ export default {
     day_size: {
       title: "Day size",
       value: {
-        big: 'big', normal: 'Normal', small: 'small'
+        large: 'Big', medium: 'Normal', small: 'Small'
       }
     },
     orientation: {
@@ -129,30 +129,30 @@ export default {
     grid_color: {
       title: "Grid color",
       value: {
-        'gray': "Gray", 'black': "Back"
+        'DDD': "Gray", '000': "Black"
       }
     },
     weekday_start: {
       title: "Weekday start",
       value: {
-        sunday: "Sunday", monday: "Monday"
+        "0": "Sunday", "1": "Monday"
       }
     },
     month_start: {
       title: "Month start",
       value: {
-        "january": "January",
-        "february": "February",
-        "march": "March",
-        "april": "April",
-        "may": "May",
-        "june": "June",
-        "july": "July",
-        "august": "August",
-        "september": "September",
-        "october": "October",
-        "november": "November",
-        "december": "December"
+        "1": "January",
+        "2": "February",
+        "3": "March",
+        "4": "April",
+        "5": "May",
+        "6": "June",
+        "7": "July",
+        "8": "August",
+        "9": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December"
       }
     }
   },
@@ -207,6 +207,68 @@ export default {
         week: "{0} {1} Calendar",
         day: "{0} {1} Calendar",
         monthly: "Monthly {0} Calendar",
+      }
+    },
+    printable: {
+      title: "Printable {0} calendars",
+      desc: "Printable {0} Calendars free for everyone, available to download as PDF files. If you're looking for a blank printable calendar or you need a calendar template with holidays to print, it's all here! Select the format which you like, preview and download free!",
+      page: {
+        "12m": {
+          title: "Year {0} Calendars",
+          desc: ""
+        },
+        "m": {
+          title: "Monthly {0} Calendars",
+          desc: ""
+        },
+        "1m": {
+          title: "One Month {0} Calendars",
+          desc: ""
+        },
+        "2m": {
+          title: "Two Months {0} Calendars",
+          desc: ""
+        },
+        "3m": {
+          title: "Three Months {0} Calendars",
+          desc: ""
+        },
+        "4m": {
+          title: "Four Months {0} Calendars",
+          desc: ""
+        },
+        "6m": {
+          title: "Six Months {0} Calendars",
+          desc: ""
+        },
+        "12mv": {
+          title: "Year {0} vertical Calendars",
+          desc: ""
+        },
+        "mv": {
+          title: "Monthly {0} vertical Calendars",
+          desc: ""
+        },
+        "1mv": {
+          title: "One Month {0} vertical Calendars",
+          desc: ""
+        },
+        "2mv": {
+          title: "Two Months {0} vertical Calendars",
+          desc: ""
+        },
+        "3mv": {
+          title: "Three Months {0} vertical Calendars",
+          desc: ""
+        },
+        "4mv": {
+          title: "Four Months {0} vertical Calendars",
+          desc: ""
+        },
+        "6mv": {
+          title: "Six Months {0} vertical Calendars",
+          desc: ""
+        },
       }
     }
   }

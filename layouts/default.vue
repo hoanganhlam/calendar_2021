@@ -16,9 +16,25 @@
               <div class="px-4 -mx-4 flex uppercase text-xs font-bold">
                 <n-link class="px-2" :to="`/year/${initDate.getFullYear()}`">{{ $t(`nav.yearly`) }}</n-link>
                 <n-link class="px-2" :to="`/monthly/${initDate.getFullYear()}`">{{ $t(`nav.monthly`) }}</n-link>
-                <n-link class="px-2" :to="`/week/${initDate.getWeekNumber()}-${initDate.getFullYear()}`">{{ $t(`nav.weekly`) }}</n-link>
-                <n-link class="px-2" :to="`/day/${initDate.getDOY()}-${initDate.getFullYear()}`">{{ $t(`nav.daily`) }}</n-link>
-                <n-link class="px-2" to="/printable">Printable</n-link>
+                <n-link class="px-2" :to="`/week/${initDate.getWeekNumber()}-${initDate.getFullYear()}`">
+                  {{ $t(`nav.weekly`) }}
+                </n-link>
+                <n-link class="px-2" :to="`/day/${initDate.getDOY()}-${initDate.getFullYear()}`">{{$t(`nav.daily`) }}
+                </n-link>
+                <div class="px-2 dropdown cursor-pointer">
+                  <div class="flex space-x-1">
+                    <n-link to="/printable">Printable</n-link>
+                    <icon name="down"></icon>
+                  </div>
+                  <div class="dropdown-wrapper">
+                    <div class="dropdown-content">
+                      <n-link class="download-item" v-for="elm in PACalendars" :key="elm.to" :to="elm.to">
+                        <icon name="right"></icon>
+                        <span>{{ elm.title }}</span>
+                      </n-link>
+                    </div>
+                  </div>
+                </div>
                 <n-link class="px-2" to="/customize">Customize</n-link>
                 <n-link class="px-2" to="/holidays">Holidays</n-link>
               </div>
@@ -43,10 +59,18 @@
     <footer class="mt-8 text-sm print:hidden">
       <div class="container mx-auto">
         <div class="mb-3 flex -mx-3">
-          <n-link to="/" class="py-1.5 px-3 border border-white hover:border-green-400">{{$t('nav.standard_calendar')}}</n-link>
-          <n-link to="/customize" class="py-1.5 px-3 border border-white hover:border-green-400">{{$t('nav.customize_calendar')}}</n-link>
-          <n-link to="/printable" class="py-1.5 px-3 border border-white hover:border-green-400">{{$t('nav.printable_calendar')}}</n-link>
-          <n-link to="/holidays" class="py-1.5 px-3 border border-white hover:border-green-400">{{$t('nav.holidays')}}</n-link>
+          <n-link to="/" class="py-1.5 px-3 border border-white hover:border-green-400">
+            {{ $t('nav.standard_calendar') }}
+          </n-link>
+          <n-link to="/customize" class="py-1.5 px-3 border border-white hover:border-green-400">
+            {{ $t('nav.customize_calendar') }}
+          </n-link>
+          <n-link to="/printable" class="py-1.5 px-3 border border-white hover:border-green-400">
+            {{ $t('nav.printable_calendar') }}
+          </n-link>
+          <n-link to="/holidays" class="py-1.5 px-3 border border-white hover:border-green-400">
+            {{ $t('nav.holidays') }}
+          </n-link>
         </div>
         <div class="mb-4">
           <p class="text-gray-500">© 2021 Sample.com. All rights reserved.</p>
@@ -62,18 +86,18 @@
             </div>
           </div>
           <div v-if="modal === 'login'" class="modal-content">
-            <h4 class="text-xl uppercase mb-4">{{$t('login')}}</h4>
+            <h4 class="text-xl uppercase mb-4">{{ $t('login') }}</h4>
             <div class="btn rounded-3xl justify-between hover:bg-gray-50">
-              <span>{{$t('login_google')}}</span>
+              <span>{{ $t('login_google') }}</span>
               <icon name="google"></icon>
             </div>
           </div>
           <div class="modal-content" v-else>
-            <h4 class="text-xl uppercase mb-4">{{$t('change_lang')}}</h4>
+            <h4 class="text-xl uppercase mb-4">{{ $t('change_lang') }}</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div v-for="lo in locales" :key="lo.code" class="btn rounded-full justify-between hover:bg-gray-50">
                 <img class="w-6 h-6" :src="`/flag/${lo.code}.svg`" :alt="lo.name">
-                <span>{{lo.name}}</span>
+                <span>{{ lo.name }}</span>
               </div>
             </div>
           </div>
@@ -106,7 +130,10 @@ export default {
   head() {
     return {
       link: [
-        {href: 'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap', rel: 'stylesheet'}
+        {
+          href: 'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap',
+          rel: 'stylesheet'
+        }
       ]
     }
   },
@@ -121,7 +148,7 @@ export default {
         const user = result.user
       }
     },
-    test: async function() {
+    test: async function () {
       const user = this.$firebase.auth().currentUser
     }
   },
@@ -133,6 +160,7 @@ export default {
   mounted() {
     const header = document.getElementById("header");
     const sticky = header.offsetTop;
+
     function myFunction() {
       if (window.pageYOffset > sticky) {
         header.classList.add("sticky");
@@ -140,9 +168,12 @@ export default {
         header.classList.remove("sticky");
       }
     }
+
     this.$nextTick(function () {
       window.onscroll = function () {
-        myFunction()
+        setTimeout(function () {
+          myFunction()
+        }, 100)
       };
     })
     setInterval(() => {
@@ -166,21 +197,26 @@ export default {
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+{
   opacity: 0;
 }
+
 .today {
   @apply font-extrabold rounded-sm -ml-1.5 p-0.5 px-1.5 bg-red-100 print:bg-white print:font-normal print:ml-0;
 }
+
 a {
   @apply text-blue-700;
 }
 
 header.sticky {
-  @apply z-50 bg-white top-0 border-b shadow py-2;
+  @apply z-50 bg-white top-0 border-b py-2;
   position: sticky;
   animation: slide-down 0.35s;
 }
+
 header .desc {
   @apply text-sm text-gray-500;
 }
@@ -195,5 +231,26 @@ header.sticky .desc {
 
 .nuxt-link-active {
   @apply text-gray-500;
+}
+
+.dropdown {
+  @apply relative;
+}
+
+.dropdown-wrapper {
+  @apply pt-3 hidden absolute top-full right-0;
+  z-index: 999;
+}
+
+.dropdown-content {
+  @apply w-64 bg-white border shadow-sm;
+}
+
+.dropdown:hover .dropdown-wrapper {
+  display: block;
+}
+
+.download-item {
+  @apply p-2 border-b border-dashed flex space-x-2;
 }
 </style>

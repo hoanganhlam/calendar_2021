@@ -79,8 +79,6 @@
 <script>
 import Sidebar from "~/components/Sidebar";
 import moment from "moment";
-import Holidays from "date-holidays"
-const hd = new Holidays()
 
 export default {
   name: "PageHoliday",
@@ -92,10 +90,9 @@ export default {
     }
   },
   async fetch() {
-    hd.init('US')
     if (this.isYear) {
       let flag = this.$route.params.flag ? this.$route.params.flag : (new Date()).getFullYear()
-      const holidays = hd.getHolidays(flag)
+      const holidays = await this.$axios.$get('/holidays')
       this.currentDate = new Date(`${flag}-1-1`)
       this.holidays = holidays.map(x => {
         let date = moment(new Date(x.date))

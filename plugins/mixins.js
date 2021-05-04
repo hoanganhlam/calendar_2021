@@ -4,6 +4,7 @@ import Noteable from "~/components/cell/Noteable.vue";
 
 Vue.component('icon', Icon);
 Vue.component('noteable', Noteable);
+const currentYear = (new Date()).getFullYear()
 
 Vue.mixin({
   data() {
@@ -11,6 +12,14 @@ Vue.mixin({
       month_names: [
         "m.january", "m.february", "m.march", "m.april", "m.may", "m.june",
         "m.july", "m.august", "m.september", "m.october", "m.november", "m.december"
+      ],
+      PACalendars: [
+        {title: `Year`, to: `/printable/year`},
+        {title: `Monthly`, to: `/printable/monthly`},
+        {title: `One month`, to: `/printable/1m`},
+        {title: `Two month`, to: `/printable/2m`},
+        {title: `Three month`, to: `/printable/3m`},
+        {title: `Six month`, to: `/printable/6m`}
       ]
     }
   },
@@ -27,6 +36,17 @@ Vue.mixin({
         .replace(/\s+/g, '-') // collapse whitespace and replace by -
         .replace(/-+/g, '-'); // collapse dashes
       return str;
+    },
+    serialize (obj) {
+      const str = [];
+      for (let p in obj)
+        if (obj.hasOwnProperty(p) && obj[p]) {
+          str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        }
+      return str.join("&");
+    },
+    imageURL(obj) {
+      return process.env.API_ENDPOINT + '/maker?preview=true&' + this.serialize(obj)
     }
   },
   computed: {
@@ -54,7 +74,7 @@ Vue.mixin({
       if (["day", "month", "monthly", "year", "week"].includes(flag) && val) {
         let arr = val.split("-");
         try {
-          let start_date = new Date(Number.parseInt(arr[['year', 'monthly'].includes(flag)  ? 0 : 1]), 0, flag === 'day' ? 0 : 1, 0, 0)
+          let start_date = new Date(Number.parseInt(arr[['year', 'monthly'].includes(flag) ? 0 : 1]), 0, flag === 'day' ? 0 : 1, 0, 0)
           if (this.isMonth) {
             if (this.month_names.indexOf(`m.${arr[0]}`) !== -1) {
               start_date = start_date.addMonths(this.month_names.indexOf(`m.${arr[0]}`))

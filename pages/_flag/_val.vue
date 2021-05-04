@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <div v-if="$route.params.flag !== 'customize'" class="h-full">
     <div class="flex print:hidden justify-between">
       <div>
         <div class="flex -mx-2 items-center">
@@ -205,7 +205,7 @@ import BoardYear from "~/components/board/Year.vue";
 import BoardWeek from "~/components/board/Week.vue";
 import {cloneDeep} from "lodash";
 import CellMonth from "@/components/cell/Month.vue";
-const RESULTS = []
+
 export default {
   name: "PageDate",
   components: {CellMonth, BoardWeek, BoardYear, BoardMonth},
@@ -227,7 +227,7 @@ export default {
     }
   },
   async fetch() {
-    this.holidays = RESULTS
+    this.holidays = []
     this.convertOption(false)
   },
   methods: {

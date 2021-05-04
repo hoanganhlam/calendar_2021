@@ -10,13 +10,16 @@ body {
 
 @media (min-width: 1536px) {
   .container {
-    max-width: 960px;
+    max-width: 1080px;
   }
 }
 
 @media (min-width: 1280px) {
+  html {
+    overflow-y: overlay;
+  }
   .container {
-    max-width: 900px;
+    max-width: 960px;
   }
 }
 
